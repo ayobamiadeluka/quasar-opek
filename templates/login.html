@@ -1,0 +1,3 @@
+{% extends 'base.html' %}{% block title %}Login | QUASAR-OPEK{% endblock %}{% block content %}
+<main class="auth-wrap"><div class="auth-card"><div class="eyebrow">MEMBER ACCESS</div><h1>Welcome back</h1><p>Use an approved account to access your dashboard.</p><form method="post" action="/login" class="form"><label>Email<input type="email" name="email" required></label><label>Password<input type="password" name="password" required></label><button class="btn primary full">Login</button></form><p class="below">New member? <a href="/register">Create an account</a></p></div></main>
+{% endblock %}

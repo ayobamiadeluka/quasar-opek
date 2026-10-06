@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="description"
+        content="QUASAR-OPEK NIG LTD member management and contribution portal."
+    >
+
+    <title>
+        {% block title %}
+        QUASAR-OPEK NIG LTD
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+
+</head>
+
+<body>
+
+<header class="nav">
+
+    <a
+        class="brand"
+        href="/"
+        aria-label="QUASAR-OPEK home"
+    >
+
+        <span class="brand-mark">
+            Q
+        </span>
+
+        <span>
+
+            <strong>
+                QUASAR-OPEK
+            </strong>
+
+            <small>
+                NIG LTD
+            </small>
+
+        </span>
+
+    </a>
+
+
+    <nav>
+
+        <a href="/">
+            Home
+        </a>
+
+
+        {% if user %}
+
+            {% if user.role == 'admin' %}
+
+                <a href="/admin">
+                    Admin
+                </a>
+
+            {% else %}
+
+                <a href="/dashboard">
+                    Dashboard
+                </a>
+
+                <a href="/profile">
+                    Profile
+                </a>
+
+            {% endif %}
+
+
+            <a
+                class="nav-cta"
+                href="/logout"
+            >
+                Logout
+            </a>
+
+        {% else %}
+
+            <a href="/login">
+                Login
+            </a>
+
+            <a
+                class="nav-cta"
+                href="/register"
+            >
+                Create Account
+            </a>
+
+        {% endif %}
+
+    </nav>
+
+</header>
+
+
+{% if flash %}
+
+<div
+    class="flash {{ flash.kind }}"
+    role="alert"
+>
+
+    {{ flash.message }}
+
+</div>
+
+{% endif %}
+
+
+{% block content %}
+
+{% endblock %}
+
+
+<footer>
+
+    <div>
+        © {{ 2026 }} QUASAR-OPEK NIG LTD · RC 154717
+    </div>
+
+    <div>
+        Investment terms and regulatory status must be independently verified.
+    </div>
+
+</footer>
+
+
+<script src="/static/app.js"></script>
+
+</body>
+
+</html>

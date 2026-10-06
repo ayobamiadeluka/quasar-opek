@@ -1,0 +1,817 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Dashboard | QUASAR-OPEK NIG LTD
+{% endblock %}
+
+{% block content %}
+
+<main class="dashboard">
+
+    <!-- HEADER -->
+
+    <div class="dash-head">
+
+        <div>
+
+            <div class="eyebrow">
+                MEMBER DASHBOARD
+            </div>
+
+            <h1>
+                Hello, {{ user.full_name.split(' ')[0] }}.
+            </h1>
+
+            <p>
+                Manage your account, contributions and weekly progress.
+            </p>
+
+        </div>
+
+        <button
+            class="btn primary"
+            onclick="openModal('depositModal')"
+            type="button"
+        >
+            + Make Contribution
+        </button>
+
+    </div>
+
+
+    <!-- MEMBER STATUS -->
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+
+                <div class="eyebrow">
+                    MEMBERSHIP STATUS
+                </div>
+
+                <h2>
+                    Your account
+                </h2>
+
+            </div>
+
+            <span class="status approved">
+                ✓ {{ user.status|capitalize }}
+            </span>
+
+        </div>
+
+
+        <div class="progress-info">
+
+            <div>
+                <span>Member</span>
+                <strong>{{ user.full_name }}</strong>
+            </div>
+
+            <div>
+                <span>Email</span>
+                <strong>{{ user.email }}</strong>
+            </div>
+
+            <div>
+                <span>Account</span>
+                <strong>{{ masked_account }}</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- STATS -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ₦
+            </div>
+
+            <small>
+                Approved Balance
+            </small>
+
+            <strong>
+                ₦{{ '{:,}'.format(approved) }}
+            </strong>
+
+            <span>
+                ✓ Approved contributions
+            </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ⏳
+            </div>
+
+            <small>
+                Pending Contributions
+            </small>
+
+            <strong>
+                ₦{{ '{:,}'.format(pending) }}
+            </strong>
+
+            <span>
+                Awaiting admin approval
+            </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🎯
+            </div>
+
+            <small>
+                Weekly Target
+            </small>
+
+            <strong>
+                ₦{{ '{:,}'.format(target) }}
+            </strong>
+
+            <span>
+                Your contribution target
+            </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                📈
+            </div>
+
+            <small>
+                This Week
+            </small>
+
+            <strong>
+                {{ progress }}%
+            </strong>
+
+            <span>
+                Weekly progress
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- WEEKLY PROGRESS -->
+
+    <section class="panel contribution-panel">
+
+        <div class="panel-head">
+
+            <div>
+
+                <div class="eyebrow">
+                    WEEKLY PROGRESS
+                </div>
+
+                <h2>
+                    Your contribution target
+                </h2>
+
+            </div>
+
+            <span class="live-badge">
+                ● MEMBER ACCOUNT
+            </span>
+
+        </div>
+
+
+        <div class="progress-info">
+
+            <div>
+
+                <span>
+                    Approved this week
+                </span>
+
+                <strong>
+                    ₦{{ '{:,}'.format(weekly_approved) }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Weekly target
+                </span>
+
+                <strong>
+                    ₦{{ '{:,}'.format(target) }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Remaining
+                </span>
+
+                <strong>
+                    ₦{{ '{:,}'.format(remaining) }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="progress-bar">
+
+            <div
+                class="progress-fill"
+                style="width: {{ [progress, 100]|min }}%;"
+            ></div>
+
+        </div>
+
+
+        {% if progress >= 100 %}
+
+        <p class="progress-message success-message">
+            ✓ You've reached your weekly contribution target.
+        </p>
+
+        {% else %}
+
+        <p class="progress-message">
+            You are {{ progress }}% toward your weekly target.
+        </p>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- QUICK ACTIONS -->
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+
+                <div class="eyebrow">
+                    QUICK ACTIONS
+                </div>
+
+                <h2>
+                    Manage your account
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="action-grid">
+
+
+            <button
+                class="action-card"
+                onclick="openModal('depositModal')"
+                type="button"
+            >
+
+                <div class="action-icon">
+                    ₦
+                </div>
+
+                <div>
+
+                    <strong>
+                        Make Contribution
+                    </strong>
+
+                    <span>
+                        Submit a new contribution
+                    </span>
+
+                </div>
+
+                <b>
+                    →
+                </b>
+
+            </button>
+
+
+            <a
+                href="/profile"
+                class="action-card"
+            >
+
+                <div class="action-icon">
+                    👤
+                </div>
+
+                <div>
+
+                    <strong>
+                        My Profile
+                    </strong>
+
+                    <span>
+                        View your account information
+                    </span>
+
+                </div>
+
+                <b>
+                    →
+                </b>
+
+            </a>
+
+
+            <a
+                href="/logout"
+                class="action-card"
+            >
+
+                <div class="action-icon">
+                    ↪
+                </div>
+
+                <div>
+
+                    <strong>
+                        Logout
+                    </strong>
+
+                    <span>
+                        Securely leave your account
+                    </span>
+
+                </div>
+
+                <b>
+                    →
+                </b>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- TRANSACTION HISTORY -->
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+
+                <div class="eyebrow">
+                    ACCOUNT ACTIVITY
+                </div>
+
+                <h2>
+                    Contribution history
+                </h2>
+
+            </div>
+
+            <span>
+                {{ transactions|length }}
+                record{{ '' if transactions|length == 1 else 's' }}
+            </span>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Reference
+                        </th>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <th>
+                            Amount
+                        </th>
+
+                        <th>
+                            Sent From
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for t in transactions %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ t.reference }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+
+                            {% if t.kind == 'registration_fee' %}
+
+                                Registration fee
+
+                            {% else %}
+
+                                Contribution
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            ₦{{ '{:,}'.format(t.amount) }}
+                        </td>
+
+
+                        <td>
+
+                            {% if t.kind == 'contribution' %}
+
+                                {% if t.transfer_bank %}
+
+                                    <strong>
+                                        {{ t.transfer_bank }}
+                                    </strong>
+
+                                    {% if t.transfer_account_name %}
+
+                                    <small>
+                                        {{ t.transfer_account_name }}
+                                    </small>
+
+                                    {% endif %}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="status {{ t.status }}">
+
+                                {% if t.status == 'approved' %}
+
+                                    ✓ Approved
+
+                                {% elif t.status == 'pending' %}
+
+                                    ⏳ Pending
+
+                                {% elif t.status == 'rejected' %}
+
+                                    ✕ Rejected
+
+                                {% else %}
+
+                                    {{ t.status }}
+
+                                {% endif %}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+                            {{ t.created_at[:10] }}
+                        </td>
+
+                    </tr>
+
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="empty"
+                        >
+
+                            <div class="empty-icon">
+                                📭
+                            </div>
+
+                            <strong>
+                                No transactions yet
+                            </strong>
+
+                            <span>
+                                Your account activity will
+                                appear here.
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     CONTRIBUTION MODAL
+====================================================== -->
+
+<div
+    id="depositModal"
+    class="modal"
+>
+
+    <div class="modal-card">
+
+        <button
+            class="close"
+            onclick="closeModal('depositModal')"
+            type="button"
+        >
+            ×
+        </button>
+
+
+        <div class="eyebrow">
+            CONTRIBUTION
+        </div>
+
+
+        <h2>
+            Make a contribution
+        </h2>
+
+
+        <p>
+            Transfer your contribution to either of the
+            official accounts below, then submit your transfer
+            details.
+        </p>
+
+
+        <!-- =========================================
+             PAYMENT ACCOUNT 1
+        ========================================== -->
+
+        <div class="pay-box">
+
+            <b>
+                IFESOWAPO MULTIPLE COOPERATIVE SOCIETY
+            </b>
+
+            <span>
+                Bank: WEMA Bank
+            </span>
+
+            <span>
+                Account: 0128147502
+            </span>
+
+            <button
+                type="button"
+                class="btn"
+                onclick="copyAccount('0128147502')"
+            >
+                Copy Account Number
+            </button>
+
+        </div>
+
+
+        <!-- =========================================
+             PAYMENT ACCOUNT 2
+        ========================================== -->
+
+        <div class="pay-box">
+
+            <b>
+                QUASAR-OPEK NIG
+            </b>
+
+            <span>
+                Bank: CORE Bank
+            </span>
+
+            <span>
+                Account: 9169247066
+            </span>
+
+            <button
+                type="button"
+                class="btn"
+                onclick="copyAccount('9169247066')"
+            >
+                Copy Account Number
+            </button>
+
+        </div>
+
+
+        <!-- CONTRIBUTION FORM -->
+
+        <form
+            method="post"
+            action="/deposit"
+            class="form"
+        >
+
+            <!-- CONTRIBUTION AMOUNT -->
+
+            <label>
+
+                Contribution amount (₦)
+
+                <input
+                    type="number"
+                    name="amount"
+                    min="1000"
+                    step="100"
+                    placeholder="e.g. 5000"
+                    required
+                >
+
+            </label>
+
+
+            <!-- BANK SENT FROM -->
+
+            <label>
+
+                Bank Sent From
+
+                <input
+                    type="text"
+                    name="transfer_bank"
+                    placeholder="e.g. Access Bank"
+                    required
+                >
+
+            </label>
+
+
+            <!-- ACCOUNT NAME SENT FROM -->
+
+            <label>
+
+                Account Name Sent From
+
+                <input
+                    type="text"
+                    name="transfer_account_name"
+                    placeholder="Name on the account you sent from"
+                    required
+                >
+
+            </label>
+
+
+            <!-- TRANSFER REFERENCE -->
+
+            <label>
+
+                Transfer Reference
+
+                <input
+                    type="text"
+                    name="reference"
+                    placeholder="Enter transaction reference"
+                    required
+                >
+
+            </label>
+
+
+            <!-- PAYMENT INSTRUCTIONS -->
+
+            <p class="field-help">
+
+                After making the payment, enter the bank,
+                account name and transaction reference
+                used for the transfer.
+
+            </p>
+
+
+            <!-- SUBMIT -->
+
+            <button
+                type="submit"
+                class="btn primary full"
+            >
+                Submit Contribution
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     COPY ACCOUNT NUMBER
+====================================================== -->
+
+<script>
+
+function copyAccount(accountNumber) {
+
+    navigator.clipboard.writeText(accountNumber)
+
+        .then(function () {
+
+            alert(
+                "Account number copied: "
+                + accountNumber
+            );
+
+        })
+
+        .catch(function () {
+
+            alert(
+                "Unable to copy automatically. " +
+                "Please copy the account number manually."
+            );
+
+        });
+
+}
+
+</script>
+
+{% endblock %}

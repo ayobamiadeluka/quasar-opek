@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block title %}
+My Profile | QUASAR-OPEK
+{% endblock %}
+
+{% block content %}
+
+<main class="dashboard">
+
+    <div class="dash-head">
+
+        <div>
+            <div class="eyebrow">MEMBER PROFILE</div>
+
+            <h1>
+                My Profile
+            </h1>
+
+            <p>
+                View your registered account information.
+            </p>
+        </div>
+
+        <a
+            href="/dashboard"
+            class="btn primary"
+        >
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <div class="eyebrow">
+                    PERSONAL INFORMATION
+                </div>
+
+                <h2>
+                    Account details
+                </h2>
+            </div>
+
+            <span class="status approved">
+                ✓ {{ user.status|capitalize }}
+            </span>
+
+        </div>
+
+
+        <div class="progress-info">
+
+            <div>
+                <span>Full name</span>
+                <strong>{{ user.full_name }}</strong>
+            </div>
+
+            <div>
+                <span>Email</span>
+                <strong>{{ user.email }}</strong>
+            </div>
+
+            <div>
+                <span>Phone</span>
+                <strong>{{ user.phone }}</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <div class="eyebrow">
+                    BANK INFORMATION
+                </div>
+
+                <h2>
+                    Registered bank account
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="progress-info">
+
+            <div>
+                <span>Bank</span>
+                <strong>{{ user.bank_name }}</strong>
+            </div>
+
+            <div>
+                <span>Account name</span>
+                <strong>{{ user.account_name }}</strong>
+            </div>
+
+            <div>
+                <span>Account number</span>
+                <strong>{{ masked_account }}</strong>
+            </div>
+
+        </div>
+
+
+        <p class="field-help">
+            For security, your complete account number is not displayed.
+        </p>
+
+    </section>
+
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <div class="eyebrow">
+                    MEMBERSHIP
+                </div>
+
+                <h2>
+                    Account information
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="progress-info">
+
+            <div>
+                <span>Membership status</span>
+
+                <strong>
+                    {{ user.status|capitalize }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Registration fee</span>
+
+                <strong>
+                    {{ user.registration_fee_status|capitalize }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Weekly target</span>
+
+                <strong>
+                    ₦{{ '{:,}'.format(user.weekly_target) }}
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <div class="eyebrow">
+                    ACCOUNT ACTIONS
+                </div>
+
+                <h2>
+                    Manage account
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="action-grid">
+
+            <a
+                href="/dashboard"
+                class="action-card"
+            >
+
+                <div class="action-icon">
+                    📊
+                </div>
+
+                <div>
+                    <strong>
+                        Dashboard
+                    </strong>
+
+                    <span>
+                        View contributions and progress
+                    </span>
+                </div>
+
+                <b>→</b>
+
+            </a>
+
+
+            <a
+                href="/logout"
+                class="action-card"
+            >
+
+                <div class="action-icon">
+                    ↪
+                </div>
+
+                <div>
+                    <strong>
+                        Logout
+                    </strong>
+
+                    <span>
+                        Securely leave your account
+                    </span>
+                </div>
+
+                <b>→</b>
+
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}

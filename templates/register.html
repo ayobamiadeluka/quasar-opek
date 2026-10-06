@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+
+{% block title %}
+Create Account · QUASAR-OPEK NIG LTD
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-wrap">
+
+    <div class="auth-card">
+
+        <div class="eyebrow">
+            MEMBERSHIP REGISTRATION
+        </div>
+
+
+        <h1>
+            Create your account
+        </h1>
+
+
+        <p>
+            Complete the registration form below to submit
+            your membership request.
+        </p>
+
+
+        <form
+            method="post"
+            action="/register"
+            class="form"
+        >
+
+            <!-- =========================================
+                 PERSONAL DETAILS
+            ========================================== -->
+
+            <h3>
+                Personal Details
+            </h3>
+
+
+            <label>
+
+                Full Name
+
+                <input
+                    type="text"
+                    name="full_name"
+                    placeholder="Enter your full name"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Email Address
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="you@example.com"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Phone Number
+
+                <input
+                    type="tel"
+                    name="phone"
+                    placeholder="Enter your phone number"
+                    required
+                >
+
+            </label>
+
+
+            <!-- =========================================
+                 ACCOUNT SECURITY
+            ========================================== -->
+
+            <h3>
+                Account Security
+            </h3>
+
+
+            <label>
+
+                Password
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Create a password"
+                    minlength="8"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Confirm Password
+
+                <input
+                    type="password"
+                    name="confirm_password"
+                    placeholder="Confirm your password"
+                    minlength="8"
+                    required
+                >
+
+            </label>
+
+
+            <!-- =========================================
+                 BANK DETAILS
+            ========================================== -->
+
+            <h3>
+                Bank Details
+            </h3>
+
+
+            <label>
+
+                Bank Name
+
+                <input
+                    type="text"
+                    name="bank_name"
+                    placeholder="Enter your bank name"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Account Name
+
+                <input
+                    type="text"
+                    name="account_name"
+                    placeholder="Enter your account name"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Account Number
+
+                <input
+                    type="text"
+                    name="account_number"
+                    placeholder="10-digit account number"
+                    maxlength="10"
+                    minlength="10"
+                    pattern="[0-9]{10}"
+                    inputmode="numeric"
+                    required
+                >
+
+            </label>
+
+
+            <!-- =========================================
+                 REGISTRATION FEE
+            ========================================== -->
+
+            <div class="fee">
+
+                <span>
+                    Registration Fee
+                </span>
+
+                <strong>
+                    ₦2,000
+                </strong>
+
+            </div>
+
+
+            <p>
+                Pay the ₦2,000 registration fee to either
+                of the official accounts below.
+            </p>
+
+
+            <!-- =========================================
+                 PAYMENT ACCOUNT 1
+            ========================================== -->
+
+            <div class="pay-box">
+
+                <b>
+                    IFESOWAPO MULTIPLE COOPERATIVE SOCIETY
+                </b>
+
+
+                <span>
+                    Bank: WEMA Bank
+                </span>
+
+
+                <span>
+                    Account: 0128147502
+                </span>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="copyAccount('0128147502')"
+                >
+                    Copy Account Number
+                </button>
+
+            </div>
+
+
+            <!-- =========================================
+                 PAYMENT ACCOUNT 2
+            ========================================== -->
+
+            <div class="pay-box">
+
+                <b>
+                    QUASAR-OPEK NIG
+                </b>
+
+
+                <span>
+                    Bank: CORE Bank
+                </span>
+
+
+                <span>
+                    Account: 9169247066
+                </span>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="copyAccount('9169247066')"
+                >
+                    Copy Account Number
+                </button>
+
+            </div>
+
+
+            <!-- =========================================
+                 TRANSACTION REFERENCE
+            ========================================== -->
+
+            <label>
+
+                Transaction Reference
+
+                <input
+                    type="text"
+                    name="registration_reference"
+                    placeholder="Enter your payment transaction reference"
+                    required
+                >
+
+            </label>
+
+
+            <!-- =========================================
+                 ACCOUNT SENT FROM
+            ========================================== -->
+
+          <label>
+
+    Account Name Sent From
+
+    <input
+        type="text"
+        name="registration_transfer_account_name"
+        placeholder="Name on the account you sent from"
+        required
+    >
+
+</label>
+
+            <!-- =========================================
+                 PAYMENT INSTRUCTIONS
+            ========================================== -->
+
+            <p class="field-help">
+
+                After making the payment, enter your
+                transaction reference and the account number
+                you sent the payment from.
+
+            </p>
+
+
+            <p>
+
+                Your registration will remain pending until
+                the payment is verified and approved by the
+                administrator.
+
+            </p>
+
+
+            <!-- =========================================
+                 SUBMIT
+            ========================================== -->
+
+            <button
+                type="submit"
+                class="btn primary full"
+            >
+                Submit Registration →
+            </button>
+
+        </form>
+
+
+        <!-- LOGIN -->
+
+        <p class="below">
+
+            Already have an account?
+
+            <a href="/login">
+                Login here
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     COPY ACCOUNT NUMBER
+========================================== -->
+
+<script>
+
+function copyAccount(accountNumber) {
+
+    navigator.clipboard.writeText(accountNumber)
+
+        .then(function () {
+
+            alert(
+                "Account number copied: "
+                + accountNumber
+            );
+
+        })
+
+        .catch(function () {
+
+            alert(
+                "Unable to copy automatically. " +
+                "Please copy the account number manually."
+            );
+
+        });
+
+}
+
+</script>
+
+{% endblock %}

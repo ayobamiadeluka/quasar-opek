@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}Member Profile | QUASAR-OPEK{% endblock %}
+
+{% block content %}
+
+<main class="dashboard">
+
+    <div class="dash-head">
+
+        <div>
+            <div class="eyebrow">ADMIN / MEMBER PROFILE</div>
+            <h1>{{ member.full_name }}</h1>
+            <p>Review member information and account activity.</p>
+        </div>
+
+        <a href="/admin" class="btn primary">
+            ← Admin Dashboard
+        </a>
+
+    </div>
+
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <div class="eyebrow">MEMBER INFORMATION</div>
+                <h2>Personal details</h2>
+            </div>
+
+            <span class="status {{ member.status }}">
+                {{ member.status|capitalize }}
+            </span>
+
+        </div>
+
+        <div class="progress-info">
+
+            <div>
+                <span>Full name</span>
+                <strong>{{ member.full_name }}</strong>
+            </div>
+
+            <div>
+                <span>Email</span>
+                <strong>{{ member.email }}</strong>
+            </div>
+
+            <div>
+                <span>Phone</span>
+                <strong>{{ member.phone }}</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <div class="eyebrow">BANK INFORMATION</div>
+                <h2>Registered bank account</h2>
+            </div>
+
+        </div>
+
+        <div class="progress-info">
+
+            <div>
+                <span>Bank</span>
+                <strong>{{ member.bank_name }}</strong>
+            </div>
+
+            <div>
+                <span>Account name</span>
+                <strong>{{ member.account_name }}</strong>
+            </div>
+
+            <div>
+                <span>Account number</span>
+                <strong>{{ masked_account }}</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <div class="eyebrow">ACCOUNT STATUS</div>
+                <h2>Membership information</h2>
+            </div>
+
+        </div>
+
+        <div class="progress-info">
+
+            <div>
+                <span>Member status</span>
+                <strong>{{ member.status|capitalize }}</strong>
+            </div>
+
+            <div>
+                <span>Registration fee</span>
+                <strong>{{ member.registration_fee_status|capitalize }}</strong>
+            </div>
+
+            <div>
+                <span>Weekly target</span>
+                <strong>₦{{ '{:,}'.format(member.weekly_target) }}</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <div class="eyebrow">ACCOUNT ACTIVITY</div>
+                <h2>Transaction history</h2>
+            </div>
+
+            <span>
+                {{ transactions|length }}
+                record{{ '' if transactions|length == 1 else 's' }}
+            </span>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Transfer From</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for t in transactions %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ t.reference }}</strong>
+                        </td>
+
+                        <td>
+                            {% if t.kind == 'registration_fee' %}
+                                Registration fee
+                            {% else %}
+                                Contribution
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            ₦{{ '{:,}'.format(t.amount) }}
+                        </td>
+
+                        <td>
+
+                            {% if t.transfer_bank %}
+
+                                <strong>
+                                    {{ t.transfer_bank }}
+                                </strong>
+
+                                <small>
+                                    {{ t.transfer_account_name }}
+                                </small>
+
+                                {% if t.transfer_account_number %}
+                                    <small>
+                                        ****{{ t.transfer_account_number[-4:] }}
+                                    </small>
+                                {% endif %}
+
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <span class="status {{ t.status }}">
+
+                                {% if t.status == 'approved' %}
+                                    ✓ Approved
+                                {% elif t.status == 'pending' %}
+                                    ⏳ Pending
+                                {% elif t.status == 'rejected' %}
+                                    ✕ Rejected
+                                {% else %}
+                                    {{ t.status }}
+                                {% endif %}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+                            {{ t.created_at[:10] }}
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="6" class="empty">
+                            No transactions found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}
