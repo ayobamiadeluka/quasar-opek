@@ -4,25 +4,28 @@
 Create Account · QUASAR-OPEK NIG LTD
 {% endblock %}
 
+
 {% block content %}
 
 <div class="auth-wrap">
 
     <div class="auth-card">
 
+        <div class="auth-logo">
+            <span class="brand-mark">Q</span>
+        </div>
+
         <div class="eyebrow">
             MEMBERSHIP REGISTRATION
         </div>
-
 
         <h1>
             Create your account
         </h1>
 
-
-        <p>
-            Complete the registration form below to submit
-            your membership request.
+        <p class="auth-subtitle">
+            Complete the form below to submit your membership
+            registration.
         </p>
 
 
@@ -30,94 +33,170 @@ Create Account · QUASAR-OPEK NIG LTD
             method="post"
             action="/register"
             class="form"
+            autocomplete="on"
         >
+
 
             <!-- =========================================
                  PERSONAL DETAILS
             ========================================== -->
 
-            <h3>
+            <h3 class="form-section-title">
                 Personal Details
             </h3>
 
 
-            <label>
+            <label for="full-name">
 
                 Full Name
 
                 <input
                     type="text"
+                    id="full-name"
                     name="full_name"
                     placeholder="Enter your full name"
+                    autocomplete="name"
                     required
                 >
 
             </label>
 
 
-            <label>
+            <label for="register-email">
 
                 Email Address
 
                 <input
                     type="email"
+                    id="register-email"
                     name="email"
                     placeholder="you@example.com"
+                    autocomplete="email"
                     required
                 >
 
             </label>
 
 
-            <label>
+            <label for="phone">
 
                 Phone Number
 
                 <input
                     type="tel"
+                    id="phone"
                     name="phone"
                     placeholder="Enter your phone number"
+                    autocomplete="tel"
                     required
                 >
 
             </label>
+
+
+            <!-- =========================================
+                 REFERRAL
+            ========================================== -->
+
+            <h3 class="form-section-title">
+                Referral
+            </h3>
+
+
+            <label for="referral-code">
+
+                Referral Code
+
+                <small>
+                    Optional
+                </small>
+
+                <input
+                    type="text"
+                    id="referral-code"
+                    name="referral_code"
+                    placeholder="Enter referral code if referred"
+                    maxlength="20"
+                    autocomplete="off"
+                    style="text-transform: uppercase;"
+                >
+
+            </label>
+
+
+            <p class="field-help">
+                If an existing QUASAR-OPEK member referred you,
+                enter their referral code. Otherwise, leave this blank.
+            </p>
 
 
             <!-- =========================================
                  ACCOUNT SECURITY
             ========================================== -->
 
-            <h3>
+            <h3 class="form-section-title">
                 Account Security
             </h3>
 
 
-            <label>
+            <label for="register-password">
 
                 Password
 
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Create a password"
-                    minlength="8"
-                    required
-                >
+                <div class="password-wrap">
+
+                    <input
+                        type="password"
+                        id="register-password"
+                        name="password"
+                        placeholder="Create a password"
+                        minlength="8"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword('register-password', this)"
+                        aria-label="Show password"
+                        title="Show password"
+                    >
+                        👁
+                    </button>
+
+                </div>
 
             </label>
 
 
-            <label>
+            <label for="confirm-password">
 
                 Confirm Password
 
-                <input
-                    type="password"
-                    name="confirm_password"
-                    placeholder="Confirm your password"
-                    minlength="8"
-                    required
-                >
+                <div class="password-wrap">
+
+                    <input
+                        type="password"
+                        id="confirm-password"
+                        name="confirm_password"
+                        placeholder="Confirm your password"
+                        minlength="8"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword('confirm-password', this)"
+                        aria-label="Show password"
+                        title="Show password"
+                    >
+                        👁
+                    </button>
+
+                </div>
 
             </label>
 
@@ -126,31 +205,40 @@ Create Account · QUASAR-OPEK NIG LTD
                  BANK DETAILS
             ========================================== -->
 
-            <h3>
+            <h3 class="form-section-title">
                 Bank Details
             </h3>
 
 
-            <label>
+            <p class="field-help">
+                Enter the bank account you want associated with
+                your QUASAR-OPEK membership.
+            </p>
+
+
+            <label for="bank-name">
 
                 Bank Name
 
                 <input
                     type="text"
+                    id="bank-name"
                     name="bank_name"
                     placeholder="Enter your bank name"
+                    autocomplete="organization"
                     required
                 >
 
             </label>
 
 
-            <label>
+            <label for="account-name">
 
                 Account Name
 
                 <input
                     type="text"
+                    id="account-name"
                     name="account_name"
                     placeholder="Enter your account name"
                     required
@@ -159,18 +247,20 @@ Create Account · QUASAR-OPEK NIG LTD
             </label>
 
 
-            <label>
+            <label for="account-number">
 
                 Account Number
 
                 <input
                     type="text"
+                    id="account-number"
                     name="account_number"
                     placeholder="10-digit account number"
                     maxlength="10"
                     minlength="10"
                     pattern="[0-9]{10}"
                     inputmode="numeric"
+                    autocomplete="off"
                     required
                 >
 
@@ -180,6 +270,11 @@ Create Account · QUASAR-OPEK NIG LTD
             <!-- =========================================
                  REGISTRATION FEE
             ========================================== -->
+
+            <h3 class="form-section-title">
+                Registration Fee
+            </h3>
+
 
             <div class="fee">
 
@@ -194,9 +289,9 @@ Create Account · QUASAR-OPEK NIG LTD
             </div>
 
 
-            <p>
-                Pay the ₦2,000 registration fee to either
-                of the official accounts below.
+            <p class="field-help">
+                Pay the ₦2,000 registration fee using one of
+                the payment accounts below.
             </p>
 
 
@@ -210,21 +305,18 @@ Create Account · QUASAR-OPEK NIG LTD
                     IFESOWAPO MULTIPLE COOPERATIVE SOCIETY
                 </b>
 
-
                 <span>
                     Bank: WEMA Bank
                 </span>
-
 
                 <span>
                     Account: 0128147502
                 </span>
 
-
                 <button
                     type="button"
                     class="btn"
-                    onclick="copyAccount('0128147502')"
+                    onclick="copyAccount('0128147502', this)"
                 >
                     Copy Account Number
                 </button>
@@ -242,21 +334,18 @@ Create Account · QUASAR-OPEK NIG LTD
                     QUASAR-OPEK NIG
                 </b>
 
-
                 <span>
                     Bank: CORE Bank
                 </span>
-
 
                 <span>
                     Account: 9169247066
                 </span>
 
-
                 <button
                     type="button"
                     class="btn"
-                    onclick="copyAccount('9169247066')"
+                    onclick="copyAccount('9169247066', this)"
                 >
                     Copy Account Number
                 </button>
@@ -265,60 +354,53 @@ Create Account · QUASAR-OPEK NIG LTD
 
 
             <!-- =========================================
-                 TRANSACTION REFERENCE
+                 PAYMENT DETAILS
             ========================================== -->
 
-            <label>
+            <label for="registration-reference">
 
                 Transaction Reference
 
                 <input
                     type="text"
+                    id="registration-reference"
                     name="registration_reference"
-                    placeholder="Enter your payment transaction reference"
+                    placeholder="Enter your payment reference"
+                    autocomplete="off"
                     required
                 >
 
             </label>
 
 
-            <!-- =========================================
-                 ACCOUNT SENT FROM
-            ========================================== -->
+            <label for="transfer-account-name">
 
-          <label>
+                Account Name Sent From
 
-    Account Name Sent From
+                <input
+                    type="text"
+                    id="transfer-account-name"
+                    name="registration_transfer_account_name"
+                    placeholder="Name on the account used for payment"
+                    required
+                >
 
-    <input
-        type="text"
-        name="registration_transfer_account_name"
-        placeholder="Name on the account you sent from"
-        required
-    >
-
-</label>
-
-            <!-- =========================================
-                 PAYMENT INSTRUCTIONS
-            ========================================== -->
-
-            <p class="field-help">
-
-                After making the payment, enter your
-                transaction reference and the account number
-                you sent the payment from.
-
-            </p>
+            </label>
 
 
-            <p>
+            <div class="payment-note">
 
-                Your registration will remain pending until
-                the payment is verified and approved by the
-                administrator.
+                <strong>
+                    Important
+                </strong>
 
-            </p>
+                <p>
+                    After submitting your registration, your account
+                    will remain pending until an administrator reviews
+                    and approves your registration and payment.
+                </p>
+
+            </div>
 
 
             <!-- =========================================
@@ -329,13 +411,15 @@ Create Account · QUASAR-OPEK NIG LTD
                 type="submit"
                 class="btn primary full"
             >
-                Submit Registration →
+                Submit Registration
             </button>
 
         </form>
 
 
-        <!-- LOGIN -->
+        <!-- =========================================
+             LOGIN LINK
+        ========================================== -->
 
         <p class="below">
 
@@ -352,22 +436,78 @@ Create Account · QUASAR-OPEK NIG LTD
 </div>
 
 
-<!-- =========================================
-     COPY ACCOUNT NUMBER
-========================================== -->
-
 <script>
 
-function copyAccount(accountNumber) {
+function togglePassword(inputId, button) {
+
+    const passwordInput =
+        document.getElementById(inputId);
+
+
+    if (passwordInput.type === "password") {
+
+        passwordInput.type = "text";
+
+        button.textContent = "🙈";
+
+        button.setAttribute(
+            "aria-label",
+            "Hide password"
+        );
+
+        button.setAttribute(
+            "title",
+            "Hide password"
+        );
+
+    } else {
+
+        passwordInput.type = "password";
+
+        button.textContent = "👁";
+
+        button.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+        button.setAttribute(
+            "title",
+            "Show password"
+        );
+
+    }
+
+}
+
+
+function copyAccount(accountNumber, button) {
+
+    if (!navigator.clipboard) {
+
+        alert(
+            "Copy is not supported here. " +
+            "Please copy the account number manually."
+        );
+
+        return;
+
+    }
+
 
     navigator.clipboard.writeText(accountNumber)
 
         .then(function () {
 
-            alert(
-                "Account number copied: "
-                + accountNumber
-            );
+            const originalText = button.textContent;
+
+            button.textContent = "Copied ✓";
+
+            setTimeout(function () {
+
+                button.textContent = originalText;
+
+            }, 1500);
 
         })
 

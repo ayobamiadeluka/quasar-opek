@@ -15,6 +15,11 @@
         content="QUASAR-OPEK NIG LTD member management and contribution portal."
     >
 
+    <meta
+        name="theme-color"
+        content="#132b63"
+    >
+
     <title>
         {% block title %}
         QUASAR-OPEK NIG LTD
@@ -28,7 +33,13 @@
 
 </head>
 
+
 <body>
+
+
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
 
 <header class="nav">
 
@@ -42,7 +53,7 @@
             Q
         </span>
 
-        <span>
+        <span class="brand-text">
 
             <strong>
                 QUASAR-OPEK
@@ -57,7 +68,7 @@
     </a>
 
 
-    <nav>
+    <nav class="nav-links">
 
         <a href="/">
             Home
@@ -69,7 +80,7 @@
             {% if user.role == 'admin' %}
 
                 <a href="/admin">
-                    Admin
+                    Admin Dashboard
                 </a>
 
             {% else %}
@@ -82,6 +93,23 @@
                     Profile
                 </a>
 
+                {% if unread_notifications is defined and unread_notifications > 0 %}
+
+                    <a
+                        href="/dashboard"
+                        class="notification-link"
+                        aria-label="Notifications"
+                    >
+                        Notifications
+
+                        <span class="notification-badge">
+                            {{ unread_notifications }}
+                        </span>
+
+                    </a>
+
+                {% endif %}
+
             {% endif %}
 
 
@@ -91,6 +119,7 @@
             >
                 Logout
             </a>
+
 
         {% else %}
 
@@ -112,39 +141,72 @@
 </header>
 
 
+<!-- =====================================================
+     FLASH MESSAGE
+===================================================== -->
+
 {% if flash %}
 
 <div
-    class="flash {{ flash.kind }}"
+    class="flash {{ flash.category }}"
     role="alert"
 >
 
-    {{ flash.message }}
+    <span class="flash-message">
+        {{ flash.message }}
+    </span>
+
+    <button
+        type="button"
+        class="flash-close"
+        onclick="this.parentElement.remove()"
+        aria-label="Close notification"
+    >
+        ×
+    </button>
 
 </div>
 
 {% endif %}
 
 
-{% block content %}
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
 
-{% endblock %}
+<main class="page-content">
 
+    {% block content %}
+
+    {% endblock %}
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
 
 <footer>
 
     <div>
-        © {{ 2026 }} QUASAR-OPEK NIG LTD · RC 154717
+        © 2026 QUASAR-OPEK NIG LTD · RC 154717
     </div>
 
     <div>
-        Investment terms and regulatory status must be independently verified.
+        Investment terms and regulatory status must be
+        independently verified.
     </div>
 
 </footer>
 
 
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
 <script src="/static/app.js"></script>
+
 
 </body>
 

@@ -4,11 +4,14 @@
 Dashboard | QUASAR-OPEK NIG LTD
 {% endblock %}
 
+
 {% block content %}
 
-<main class="dashboard">
+<div class="dashboard">
 
-    <!-- HEADER -->
+    <!-- =====================================================
+         DASHBOARD HEADER
+    ====================================================== -->
 
     <div class="dash-head">
 
@@ -28,10 +31,11 @@ Dashboard | QUASAR-OPEK NIG LTD
 
         </div>
 
+
         <button
             class="btn primary"
-            onclick="openModal('depositModal')"
             type="button"
+            onclick="openModal('depositModal')"
         >
             + Make Contribution
         </button>
@@ -39,7 +43,119 @@ Dashboard | QUASAR-OPEK NIG LTD
     </div>
 
 
-    <!-- MEMBER STATUS -->
+    <!-- =====================================================
+         NOTIFICATIONS
+    ====================================================== -->
+
+    {% if notifications %}
+
+    <section class="panel notification-panel">
+
+        <div class="panel-head">
+
+            <div>
+
+                <div class="eyebrow">
+                    NOTIFICATIONS
+                </div>
+
+                <h2>
+                    Recent updates
+                </h2>
+
+            </div>
+
+
+            {% if unread_notifications > 0 %}
+
+            <span class="notification-badge">
+                {{ unread_notifications }} unread
+            </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="notification-list">
+
+            {% for notification in notifications %}
+
+            <div
+                class="notification-item {% if not notification.is_read %}unread{% endif %}"
+            >
+
+                <div class="notification-icon">
+                    {% if notification.category == 'success' %}
+                        ✓
+                    {% elif notification.category == 'warning' %}
+                        !
+                    {% else %}
+                        ●
+                    {% endif %}
+                </div>
+
+
+                <div class="notification-content">
+
+                    <strong>
+                        {{ notification.title }}
+                    </strong>
+
+                    <p>
+                        {{ notification.message }}
+                    </p>
+
+                    <small>
+                        {{ notification.created_at[:16] }}
+                    </small>
+
+                </div>
+
+
+                {% if not notification.is_read %}
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="markNotificationRead({{ notification.id }}, this)"
+                >
+                    Mark read
+                </button>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% if unread_notifications > 0 %}
+
+        <div class="notification-footer">
+
+            <button
+                type="button"
+                class="btn"
+                onclick="markAllNotificationsRead()"
+            >
+                Mark all as read
+            </button>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         MEMBERSHIP STATUS
+    ====================================================== -->
 
     <section class="panel">
 
@@ -57,8 +173,19 @@ Dashboard | QUASAR-OPEK NIG LTD
 
             </div>
 
-            <span class="status approved">
-                ✓ {{ user.status|capitalize }}
+
+            <span class="status {{ user.status }}">
+
+                {% if user.status == 'approved' %}
+                    ✓ Approved
+                {% elif user.status == 'pending' %}
+                    ⏳ Pending
+                {% elif user.status == 'rejected' %}
+                    ✕ Rejected
+                {% else %}
+                    {{ user.status|capitalize }}
+                {% endif %}
+
             </span>
 
         </div>
@@ -67,18 +194,41 @@ Dashboard | QUASAR-OPEK NIG LTD
         <div class="progress-info">
 
             <div>
-                <span>Member</span>
-                <strong>{{ user.full_name }}</strong>
+
+                <span>
+                    Member
+                </span>
+
+                <strong>
+                    {{ user.full_name }}
+                </strong>
+
             </div>
 
-            <div>
-                <span>Email</span>
-                <strong>{{ user.email }}</strong>
-            </div>
 
             <div>
-                <span>Account</span>
-                <strong>{{ masked_account }}</strong>
+
+                <span>
+                    Email
+                </span>
+
+                <strong>
+                    {{ user.email }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Account
+                </span>
+
+                <strong>
+                    {{ masked_account }}
+                </strong>
+
             </div>
 
         </div>
@@ -86,7 +236,92 @@ Dashboard | QUASAR-OPEK NIG LTD
     </section>
 
 
-    <!-- STATS -->
+    <!-- =====================================================
+         REGISTRATION FEE STATUS
+    ====================================================== -->
+
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+
+                <div class="eyebrow">
+                    REGISTRATION
+                </div>
+
+                <h2>
+                    Registration fee
+                </h2>
+
+            </div>
+
+
+            <span class="status {{ registration_fee.status }}">
+
+                {% if registration_fee.status == 'approved' %}
+                    ✓ Approved
+                {% elif registration_fee.status == 'pending' %}
+                    ⏳ Pending
+                {% elif registration_fee.status == 'rejected' %}
+                    ✕ Rejected
+                {% else %}
+                    {{ registration_fee.status|capitalize }}
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+        <div class="progress-info">
+
+            <div>
+
+                <span>
+                    Amount
+                </span>
+
+                <strong>
+                    ₦{{ '{:,.0f}'.format(registration_fee.amount or 0) }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Reference
+                </span>
+
+                <strong>
+                    {{ registration_fee.reference or '—' }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Status
+                </span>
+
+                <strong>
+                    {{ registration_fee.status|capitalize }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         STATISTICS
+    ====================================================== -->
 
     <section class="stats">
 
@@ -101,7 +336,7 @@ Dashboard | QUASAR-OPEK NIG LTD
             </small>
 
             <strong>
-                ₦{{ '{:,}'.format(approved) }}
+                ₦{{ '{:,.0f}'.format(approved_total or 0) }}
             </strong>
 
             <span>
@@ -122,7 +357,7 @@ Dashboard | QUASAR-OPEK NIG LTD
             </small>
 
             <strong>
-                ₦{{ '{:,}'.format(pending) }}
+                ₦{{ '{:,.0f}'.format(pending_total or 0) }}
             </strong>
 
             <span>
@@ -143,7 +378,7 @@ Dashboard | QUASAR-OPEK NIG LTD
             </small>
 
             <strong>
-                ₦{{ '{:,}'.format(target) }}
+                ₦{{ '{:,.0f}'.format(weekly_target or 0) }}
             </strong>
 
             <span>
@@ -176,7 +411,9 @@ Dashboard | QUASAR-OPEK NIG LTD
     </section>
 
 
-    <!-- WEEKLY PROGRESS -->
+    <!-- =====================================================
+         WEEKLY PROGRESS
+    ====================================================== -->
 
     <section class="panel contribution-panel">
 
@@ -194,6 +431,7 @@ Dashboard | QUASAR-OPEK NIG LTD
 
             </div>
 
+
             <span class="live-badge">
                 ● MEMBER ACCOUNT
             </span>
@@ -210,7 +448,7 @@ Dashboard | QUASAR-OPEK NIG LTD
                 </span>
 
                 <strong>
-                    ₦{{ '{:,}'.format(weekly_approved) }}
+                    ₦{{ '{:,.0f}'.format(weekly_approved or 0) }}
                 </strong>
 
             </div>
@@ -223,7 +461,7 @@ Dashboard | QUASAR-OPEK NIG LTD
                 </span>
 
                 <strong>
-                    ₦{{ '{:,}'.format(target) }}
+                    ₦{{ '{:,.0f}'.format(weekly_target or 0) }}
                 </strong>
 
             </div>
@@ -236,7 +474,7 @@ Dashboard | QUASAR-OPEK NIG LTD
                 </span>
 
                 <strong>
-                    ₦{{ '{:,}'.format(remaining) }}
+                    ₦{{ '{:,.0f}'.format(remaining or 0) }}
                 </strong>
 
             </div>
@@ -271,7 +509,125 @@ Dashboard | QUASAR-OPEK NIG LTD
     </section>
 
 
-    <!-- QUICK ACTIONS -->
+    <!-- =====================================================
+         REFERRAL PROGRAM
+    ====================================================== -->
+
+    <section class="panel referral-panel">
+
+        <div class="panel-head">
+
+            <div>
+
+                <div class="eyebrow">
+                    MEMBER REFERRAL
+                </div>
+
+                <h2>
+                    Invite New Members
+                </h2>
+
+                <p>
+                    Share your referral code with people you invite
+                    to join QUASAR-OPEK.
+                </p>
+
+            </div>
+
+
+            <span class="live-badge">
+                ● REFERRAL ACTIVE
+            </span>
+
+        </div>
+
+
+        <div class="stats referral-stats">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🔗
+                </div>
+
+                <small>
+                    Your Referral Code
+                </small>
+
+                <strong>
+                    {{ user.referral_code or 'N/A' }}
+                </strong>
+
+                <span>
+                    Share this code with new members
+                </span>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    👥
+                </div>
+
+                <small>
+                    Members Referred
+                </small>
+
+                <strong>
+                    {{ referral_count or 0 }}
+                </strong>
+
+                <span>
+                    Members linked to your account
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="referral-code-box">
+
+            <div>
+
+                <span>
+                    YOUR REFERRAL CODE
+                </span>
+
+                <strong id="referralCode">
+                    {{ user.referral_code or 'N/A' }}
+                </strong>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="btn primary"
+                onclick="copyReferralCode()"
+            >
+                Copy Code
+            </button>
+
+        </div>
+
+
+        <p
+            id="referralMessage"
+            class="progress-message success-message"
+            style="display:none;"
+        >
+            ✓ Referral code copied.
+        </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         QUICK ACTIONS
+    ====================================================== -->
 
     <section class="panel">
 
@@ -293,7 +649,6 @@ Dashboard | QUASAR-OPEK NIG LTD
 
 
         <div class="action-grid">
-
 
             <button
                 class="action-card"
@@ -384,7 +739,9 @@ Dashboard | QUASAR-OPEK NIG LTD
     </section>
 
 
-    <!-- TRANSACTION HISTORY -->
+    <!-- =====================================================
+         TRANSACTION HISTORY
+    ====================================================== -->
 
     <section class="panel">
 
@@ -402,9 +759,13 @@ Dashboard | QUASAR-OPEK NIG LTD
 
             </div>
 
+
             <span>
+
                 {{ transactions|length }}
+
                 record{{ '' if transactions|length == 1 else 's' }}
+
             </span>
 
         </div>
@@ -455,7 +816,7 @@ Dashboard | QUASAR-OPEK NIG LTD
 
                         <td>
                             <strong>
-                                {{ t.reference }}
+                                {{ t.reference or '—' }}
                             </strong>
                         </td>
 
@@ -476,7 +837,7 @@ Dashboard | QUASAR-OPEK NIG LTD
 
 
                         <td>
-                            ₦{{ '{:,}'.format(t.amount) }}
+                            ₦{{ '{:,.0f}'.format(t.amount or 0) }}
                         </td>
 
 
@@ -531,7 +892,7 @@ Dashboard | QUASAR-OPEK NIG LTD
 
                                 {% else %}
 
-                                    {{ t.status }}
+                                    {{ t.status|capitalize }}
 
                                 {% endif %}
 
@@ -565,8 +926,7 @@ Dashboard | QUASAR-OPEK NIG LTD
                             </strong>
 
                             <span>
-                                Your account activity will
-                                appear here.
+                                Your account activity will appear here.
                             </span>
 
                         </td>
@@ -583,7 +943,7 @@ Dashboard | QUASAR-OPEK NIG LTD
 
     </section>
 
-</main>
+</div>
 
 
 <!-- =====================================================
@@ -601,6 +961,7 @@ Dashboard | QUASAR-OPEK NIG LTD
             class="close"
             onclick="closeModal('depositModal')"
             type="button"
+            aria-label="Close"
         >
             ×
         </button>
@@ -617,15 +978,12 @@ Dashboard | QUASAR-OPEK NIG LTD
 
 
         <p>
-            Transfer your contribution to either of the
-            official accounts below, then submit your transfer
-            details.
+            Transfer your contribution to one of the official
+            accounts below, then submit your transfer details.
         </p>
 
 
-        <!-- =========================================
-             PAYMENT ACCOUNT 1
-        ========================================== -->
+        <!-- PAYMENT ACCOUNT 1 -->
 
         <div class="pay-box">
 
@@ -644,7 +1002,7 @@ Dashboard | QUASAR-OPEK NIG LTD
             <button
                 type="button"
                 class="btn"
-                onclick="copyAccount('0128147502')"
+                onclick="copyAccount('0128147502', this)"
             >
                 Copy Account Number
             </button>
@@ -652,9 +1010,7 @@ Dashboard | QUASAR-OPEK NIG LTD
         </div>
 
 
-        <!-- =========================================
-             PAYMENT ACCOUNT 2
-        ========================================== -->
+        <!-- PAYMENT ACCOUNT 2 -->
 
         <div class="pay-box">
 
@@ -673,7 +1029,7 @@ Dashboard | QUASAR-OPEK NIG LTD
             <button
                 type="button"
                 class="btn"
-                onclick="copyAccount('9169247066')"
+                onclick="copyAccount('9169247066', this)"
             >
                 Copy Account Number
             </button>
@@ -688,8 +1044,6 @@ Dashboard | QUASAR-OPEK NIG LTD
             action="/deposit"
             class="form"
         >
-
-            <!-- CONTRIBUTION AMOUNT -->
 
             <label>
 
@@ -707,8 +1061,6 @@ Dashboard | QUASAR-OPEK NIG LTD
             </label>
 
 
-            <!-- BANK SENT FROM -->
-
             <label>
 
                 Bank Sent From
@@ -722,8 +1074,6 @@ Dashboard | QUASAR-OPEK NIG LTD
 
             </label>
 
-
-            <!-- ACCOUNT NAME SENT FROM -->
 
             <label>
 
@@ -739,7 +1089,24 @@ Dashboard | QUASAR-OPEK NIG LTD
             </label>
 
 
-            <!-- TRANSFER REFERENCE -->
+            <label>
+
+                Account Number Sent From
+
+                <input
+                    type="text"
+                    name="transfer_account_number"
+                    placeholder="10-digit account number"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    maxlength="10"
+                    minlength="10"
+                    pattern="[0-9]{10}"
+                    required
+                >
+
+            </label>
+
 
             <label>
 
@@ -749,24 +1116,18 @@ Dashboard | QUASAR-OPEK NIG LTD
                     type="text"
                     name="reference"
                     placeholder="Enter transaction reference"
+                    autocomplete="off"
                     required
                 >
 
             </label>
 
 
-            <!-- PAYMENT INSTRUCTIONS -->
-
             <p class="field-help">
-
-                After making the payment, enter the bank,
-                account name and transaction reference
-                used for the transfer.
-
+                Enter the exact bank, account name, account number
+                and transaction reference used for the transfer.
             </p>
 
-
-            <!-- SUBMIT -->
 
             <button
                 type="submit"
@@ -782,22 +1143,52 @@ Dashboard | QUASAR-OPEK NIG LTD
 </div>
 
 
-<!-- =====================================================
-     COPY ACCOUNT NUMBER
-====================================================== -->
-
 <script>
 
-function copyAccount(accountNumber) {
+/* =====================================================
+   COPY ACCOUNT NUMBER
+===================================================== */
+
+function copyAccount(accountNumber, button) {
+
+    if (!navigator.clipboard) {
+
+        alert(
+            "Account number: " + accountNumber
+        );
+
+        return;
+    }
+
 
     navigator.clipboard.writeText(accountNumber)
 
         .then(function () {
 
-            alert(
-                "Account number copied: "
-                + accountNumber
-            );
+            if (!button) {
+
+                alert(
+                    "Account number copied: "
+                    + accountNumber
+                );
+
+                return;
+            }
+
+
+            const originalText =
+                button.textContent;
+
+            button.textContent =
+                "Copied ✓";
+
+
+            setTimeout(function () {
+
+                button.textContent =
+                    originalText;
+
+            }, 1500);
 
         })
 
@@ -809,6 +1200,228 @@ function copyAccount(accountNumber) {
             );
 
         });
+
+}
+
+
+/* =====================================================
+   COPY REFERRAL CODE
+===================================================== */
+
+function copyReferralCode() {
+
+    const element =
+        document.getElementById("referralCode");
+
+
+    if (!element) {
+        return;
+    }
+
+
+    const code =
+        element.innerText.trim();
+
+
+    if (!code || code === "N/A") {
+
+        alert(
+            "No referral code is available."
+        );
+
+        return;
+    }
+
+
+    if (!navigator.clipboard) {
+
+        alert(
+            "Your referral code is: " + code
+        );
+
+        return;
+    }
+
+
+    navigator.clipboard.writeText(code)
+
+        .then(function () {
+
+            const message =
+                document.getElementById(
+                    "referralMessage"
+                );
+
+
+            if (message) {
+
+                message.style.display =
+                    "block";
+
+
+                setTimeout(function () {
+
+                    message.style.display =
+                        "none";
+
+                }, 2500);
+
+            }
+
+        })
+
+        .catch(function () {
+
+            alert(
+                "Your referral code is: " + code
+            );
+
+        });
+
+}
+
+
+/* =====================================================
+   MARK ONE NOTIFICATION AS READ
+===================================================== */
+
+function markNotificationRead(
+    notificationId,
+    button
+) {
+
+    fetch(
+        "/notifications/"
+        + notificationId
+        + "/read",
+        {
+            method: "POST"
+        }
+    )
+
+    .then(function (response) {
+
+        if (!response.ok) {
+            throw new Error("Unable to update notification");
+        }
+
+        return response.json();
+
+    })
+
+    .then(function () {
+
+        const item =
+            button.closest(
+                ".notification-item"
+            );
+
+
+        if (item) {
+
+            item.classList.remove("unread");
+
+        }
+
+
+        button.remove();
+
+        updateNotificationBadge();
+
+    })
+
+    .catch(function () {
+
+        alert(
+            "Unable to mark this notification as read."
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   MARK ALL NOTIFICATIONS AS READ
+===================================================== */
+
+function markAllNotificationsRead() {
+
+    fetch(
+        "/notifications/read-all",
+        {
+            method: "GET"
+        }
+    )
+
+    .then(function (response) {
+
+        if (!response.ok) {
+            throw new Error("Unable to update notifications");
+        }
+
+        return response;
+
+    })
+
+    .then(function () {
+
+        document
+            .querySelectorAll(
+                ".notification-item.unread"
+            )
+            .forEach(function (item) {
+
+                item.classList.remove("unread");
+
+            });
+
+
+        document
+            .querySelectorAll(
+                ".notification-item .btn"
+            )
+            .forEach(function (button) {
+
+                button.remove();
+
+            });
+
+
+        updateNotificationBadge();
+
+    })
+
+    .catch(function () {
+
+        alert(
+            "Unable to mark notifications as read."
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   UPDATE NOTIFICATION BADGE
+===================================================== */
+
+function updateNotificationBadge() {
+
+    const badges =
+        document.querySelectorAll(
+            ".notification-badge"
+        );
+
+
+    badges.forEach(function (badge) {
+
+        badge.textContent = "0";
+
+        badge.style.display = "none";
+
+    });
 
 }
 

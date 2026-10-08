@@ -479,6 +479,56 @@ input:focus {
 }
 
 
+/* =====================================================
+   PASSWORD SHOW / HIDE
+===================================================== */
+
+.password-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrap input {
+    width: 100%;
+    padding-right: 50px;
+    box-sizing: border-box;
+}
+
+.password-toggle {
+    position: absolute;
+
+    right: 10px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 36px;
+    height: 36px;
+
+    border: 0;
+    background: transparent;
+
+    color: var(--muted);
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    font-size: 18px;
+
+    z-index: 2;
+}
+
+.password-toggle:hover {
+    color: var(--wine);
+    opacity: .8;
+}
+
+
 /* =========================
    DASHBOARD
 ========================= */
@@ -653,7 +703,6 @@ td small {
 
 /* =====================================================
    MODAL
-   FIXED: MODAL CAN NOW SCROLL
 ===================================================== */
 
 .modal {
@@ -670,10 +719,7 @@ td small {
 
     place-items: center;
 
-    /* Allows the whole overlay to scroll if necessary */
     overflow-y: auto;
-
-    /* Prevent horizontal scrolling */
     overflow-x: hidden;
 }
 
@@ -700,23 +746,17 @@ td small {
 
     width: min(620px, 100%);
 
-    /* IMPORTANT */
     max-height: calc(100vh - 48px);
 
-    /* IMPORTANT */
     overflow-y: auto;
-
     overflow-x: hidden;
 
     box-shadow: 0 30px 80px rgba(0,0,0,.25);
 
-    /* Keeps sizing correct */
     box-sizing: border-box;
 
-    /* Smooth scrolling */
     scroll-behavior: smooth;
 
-    /* Firefox scrollbar */
     scrollbar-width: thin;
 }
 
@@ -864,6 +904,26 @@ footer {
 
 
 /* =====================================================
+   ADMIN DELETE BUTTON
+===================================================== */
+
+.delete-member {
+    background: #a72828;
+    color: #ffffff;
+    border: 0;
+    border-radius: 7px;
+    padding: 7px 9px;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.delete-member:hover {
+    background: #7f1f1f;
+}
+
+
+/* =====================================================
    TABLET
 ===================================================== */
 
@@ -1004,19 +1064,4 @@ footer {
     footer {
         flex-direction: column;
     }
-}
-/* Admin delete button */
-.delete-member {
-    background: #a72828;
-    color: #ffffff;
-    border: 0;
-    border-radius: 7px;
-    padding: 7px 9px;
-    font-size: 11px;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-.delete-member:hover {
-    background: #7f1f1f;
 }

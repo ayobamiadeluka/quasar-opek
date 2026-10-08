@@ -1,0 +1,548 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Dashboard · QUASAR-OPEK NIG LTD
+{% endblock %}
+
+{% block content %}
+
+<div class="page-shell">
+
+    <div class="page-head">
+        <div>
+            <div class="eyebrow">ADMINISTRATION</div>
+            <h1>Admin Dashboard</h1>
+            <p class="muted">
+                Manage members, registrations and contribution approvals.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+    <div class="grid stats-grid">
+
+        <div class="card stat-card">
+            <span class="muted">Total Members</span>
+            <strong>{{ total_members }}</strong>
+        </div>
+
+        <div class="card stat-card">
+            <span class="muted">Pending Members</span>
+            <strong>{{ pending_members }}</strong>
+        </div>
+
+        <div class="card stat-card">
+            <span class="muted">Approved Members</span>
+            <strong>{{ approved_members }}</strong>
+        </div>
+
+        <div class="card stat-card">
+            <span class="muted">Rejected Members</span>
+            <strong>{{ rejected_members }}</strong>
+        </div>
+
+    </div>
+
+
+    <!-- CONTRIBUTION SUMMARY -->
+    <div class="grid stats-grid">
+
+        <div class="card stat-card">
+            <span class="muted">Pending Deposits</span>
+            <strong>
+                ₦{{ "{:,.0f}".format(pending_deposits_total or 0) }}
+            </strong>
+        </div>
+
+        <div class="card stat-card">
+            <span class="muted">Approved Contributions</span>
+            <strong>
+                ₦{{ "{:,.0f}".format(approved_deposits_total or 0) }}
+            </strong>
+        </div>
+
+        <div class="card stat-card">
+            <span class="muted">Rejected Contributions</span>
+            <strong>
+                ₦{{ "{:,.0f}".format(rejected_deposits_total or 0) }}
+            </strong>
+        </div>
+
+        <div class="card stat-card">
+            <span class="muted">Pending Registration Fees</span>
+            <strong>
+                ₦{{ "{:,.0f}".format(pending_registration_fees or 0) }}
+            </strong>
+        </div>
+
+    </div>
+
+
+    <!-- PENDING REGISTRATIONS -->
+    <section class="card">
+
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">MEMBERS</div>
+                <h2>Pending Registrations</h2>
+            </div>
+        </div>
+
+        {% if pending_registrations %}
+
+        <div class="table-wrap">
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Registration Fee</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for member in pending_registrations %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ member.full_name }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ member.email }}
+                        </td>
+
+                        <td>
+                            {{ member.phone }}
+                        </td>
+
+                        <td>
+                            ₦2,000
+                        </td>
+
+                        <td>
+
+                            <div class="action-row">
+
+                                <a
+                                    href="/admin/member/{{ member.id }}"
+                                    class="btn secondary"
+                                >
+                                    View
+                                </a>
+
+                                <form
+                                    method="post"
+                                    action="/admin/member/{{ member.id }}/approve"
+                                    onsubmit="return confirm('Approve this member?');"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="btn primary"
+                                    >
+                                        Approve
+                                    </button>
+                                </form>
+
+                                <form
+                                    method="post"
+                                    action="/admin/member/{{ member.id }}/reject"
+                                    onsubmit="return confirm('Reject this member?');"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="btn danger"
+                                    >
+                                        Reject
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+        </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <strong>No pending registrations</strong>
+                <p class="muted">
+                    New member registrations will appear here.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- CONTRIBUTIONS -->
+    <section class="card">
+
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">PAYMENTS</div>
+                <h2>Contribution Requests</h2>
+            </div>
+        </div>
+
+        {% if deposits %}
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Amount</th>
+                        <th>Reference</th>
+                        <th>Transfer Account</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for deposit in deposits %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ deposit.full_name }}
+                            </strong>
+
+                            <small class="muted">
+                                {{ deposit.email }}
+                            </small>
+                        </td>
+
+                        <td>
+                            <strong>
+                                ₦{{ "{:,.0f}".format(deposit.amount or 0) }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ deposit.reference or "—" }}
+                        </td>
+
+                        <td>
+                            {{ deposit.transfer_bank or "—" }}
+                            <br>
+                            {{ deposit.transfer_account_name or "—" }}
+                            <br>
+                            {{ deposit.transfer_account_number or "—" }}
+                        </td>
+
+                        <td>
+
+                            {% if deposit.status == "approved" %}
+
+                                <span class="status-badge approved">
+                                    Approved
+                                </span>
+
+                            {% elif deposit.status == "rejected" %}
+
+                                <span class="status-badge rejected">
+                                    Rejected
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-badge pending">
+                                    Pending
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if deposit.status == "pending" %}
+
+                                <div class="action-row">
+
+                                    <form
+                                        method="post"
+                                        action="/admin/deposit/{{ deposit.id }}/approve"
+                                        onsubmit="return confirm('Approve this contribution?');"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="btn primary"
+                                        >
+                                            Approve
+                                        </button>
+                                    </form>
+
+                                    <form
+                                        method="post"
+                                        action="/admin/deposit/{{ deposit.id }}/reject"
+                                        onsubmit="return confirm('Reject this contribution?');"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="btn danger"
+                                        >
+                                            Reject
+                                        </button>
+                                    </form>
+
+                                </div>
+
+                            {% else %}
+
+                                <span class="muted">
+                                    No action
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <strong>No contribution requests</strong>
+                <p class="muted">
+                    Member contribution requests will appear here.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- ALL MEMBERS -->
+    <section class="card">
+
+        <div class="section-head">
+
+            <div>
+                <div class="eyebrow">MEMBERS</div>
+                <h2>All Members</h2>
+            </div>
+
+        </div>
+
+
+        <!-- SEARCH -->
+        <form
+            method="get"
+            action="/admin"
+            class="form"
+        >
+
+            <div class="two-col">
+
+                <label>
+                    Search
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search or '' }}"
+                        placeholder="Name or email"
+                    >
+                </label>
+
+
+                <label>
+                    Status
+
+                    <select name="status">
+
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        <option
+                            value="pending"
+                            {% if status == "pending" %}selected{% endif %}
+                        >
+                            Pending
+                        </option>
+
+                        <option
+                            value="approved"
+                            {% if status == "approved" %}selected{% endif %}
+                        >
+                            Approved
+                        </option>
+
+                        <option
+                            value="rejected"
+                            {% if status == "rejected" %}selected{% endif %}
+                        >
+                            Rejected
+                        </option>
+
+                    </select>
+
+                </label>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn secondary"
+            >
+                Search Members
+            </button>
+
+        </form>
+
+
+        {% if members %}
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Member</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Weekly Target</th>
+                        <th>Referral Code</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for member in members %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ member.full_name }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ member.email }}
+                        </td>
+
+                        <td>
+
+                            {% if member.status == "approved" %}
+
+                                <span class="status-badge approved">
+                                    Approved
+                                </span>
+
+                            {% elif member.status == "rejected" %}
+
+                                <span class="status-badge rejected">
+                                    Rejected
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-badge pending">
+                                    Pending
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            ₦{{ "{:,.0f}".format(member.weekly_target or 1000) }}
+                        </td>
+
+                        <td>
+                            {{ member.referral_code or "—" }}
+                        </td>
+
+                        <td>
+
+                            <div class="action-row">
+
+                                <a
+                                    href="/admin/member/{{ member.id }}"
+                                    class="btn secondary"
+                                >
+                                    View
+                                </a>
+
+                                <form
+                                    method="post"
+                                    action="/admin/member/{{ member.id }}/delete"
+                                    onsubmit="return confirm('Delete this member permanently?');"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="btn danger"
+                                    >
+                                        Delete
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <strong>No members found</strong>
+                <p class="muted">
+                    Try changing your search or status filter.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}

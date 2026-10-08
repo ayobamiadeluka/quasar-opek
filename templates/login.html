@@ -1,3 +1,172 @@
-{% extends 'base.html' %}{% block title %}Login | QUASAR-OPEK{% endblock %}{% block content %}
-<main class="auth-wrap"><div class="auth-card"><div class="eyebrow">MEMBER ACCESS</div><h1>Welcome back</h1><p>Use an approved account to access your dashboard.</p><form method="post" action="/login" class="form"><label>Email<input type="email" name="email" required></label><label>Password<input type="password" name="password" required></label><button class="btn primary full">Login</button></form><p class="below">New member? <a href="/register">Create an account</a></p></div></main>
+{% extends 'base.html' %}
+
+{% block title %}
+Login | QUASAR-OPEK NIG LTD
+{% endblock %}
+
+
+{% block content %}
+
+<div class="auth-wrap">
+
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            <span class="brand-mark">Q</span>
+        </div>
+
+        <div class="eyebrow">
+            MEMBER ACCESS
+        </div>
+
+        <h1>
+            Welcome back
+        </h1>
+
+        <p class="auth-subtitle">
+            Use your approved account to access your dashboard.
+        </p>
+
+
+        <form
+            method="post"
+            action="/login"
+            class="form"
+            autocomplete="on"
+        >
+
+            <label for="login-email">
+
+                Email
+
+                <input
+                    type="email"
+                    id="login-email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                >
+
+            </label>
+
+
+            <label for="login-password">
+
+                Password
+
+                <div class="password-wrap">
+
+                    <input
+                        type="password"
+                        id="login-password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword()"
+                        aria-label="Show password"
+                        title="Show password"
+                    >
+                        👁
+                    </button>
+
+                </div>
+
+            </label>
+
+
+            <button
+                class="btn primary full"
+                type="submit"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <p class="below">
+
+            New member?
+
+            <a href="/register">
+                Create an account
+            </a>
+
+        </p>
+
+
+        <div class="login-notice">
+
+            <strong>
+                New account?
+            </strong>
+
+            <p>
+                Your account must be approved by the administrator
+                before you can log in.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function togglePassword() {
+
+    const password =
+        document.getElementById("login-password");
+
+    const button =
+        document.querySelector(".password-toggle");
+
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        button.textContent = "🙈";
+
+        button.setAttribute(
+            "aria-label",
+            "Hide password"
+        );
+
+        button.setAttribute(
+            "title",
+            "Hide password"
+        );
+
+    } else {
+
+        password.type = "password";
+
+        button.textContent = "👁";
+
+        button.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+        button.setAttribute(
+            "title",
+            "Show password"
+        );
+
+    }
+
+}
+
+</script>
+
 {% endblock %}

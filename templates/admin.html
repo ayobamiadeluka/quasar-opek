@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 
 <div class="page-head">
@@ -9,575 +8,569 @@
         <p>Manage members, registrations and contributions.</p>
     </div>
 
-    <a href="/logout" class="btn btn-outline">Logout</a>
-</div>
 
+<a href="/logout" class="btn btn-outline">Logout</a>
+
+
+</div>
 
 <!-- ================= STATS ================= -->
 
 <div class="stats-grid">
 
-    <div class="stat-card">
-        <span>Total Members</span>
-        <strong>{{ members }}</strong>
-    </div>
 
-    <div class="stat-card">
-        <span>Approved Members</span>
-        <strong>{{ approved_members }}</strong>
-    </div>
-
-    <div class="stat-card">
-        <span>Pending Members</span>
-        <strong>{{ pending_members }}</strong>
-    </div>
-
-    <div class="stat-card">
-        <span>Rejected Members</span>
-        <strong>{{ rejected_members }}</strong>
-    </div>
-
+<div class="stat-card">
+    <span>Total Members</span>
+    <strong>{{ members }}</strong>
 </div>
 
+<div class="stat-card">
+    <span>Approved Members</span>
+    <strong>{{ approved_members }}</strong>
+</div>
+
+<div class="stat-card">
+    <span>Pending Members</span>
+    <strong>{{ pending_members }}</strong>
+</div>
+
+<div class="stat-card">
+    <span>Rejected Members</span>
+    <strong>{{ rejected_members }}</strong>
+</div>
+
+
+</div>
 
 <!-- ================= PENDING REGISTRATIONS ================= -->
 
 <section class="panel">
 
-    <div class="panel-head">
-        <div>
-            <span class="eyebrow">REGISTRATION</span>
-            <h2>Pending Registrations</h2>
-        </div>
 
-        <span class="badge">
-            {{ pending_reg|length }} Pending
-        </span>
+<div class="panel-head">
+    <div>
+        <span class="eyebrow">REGISTRATION</span>
+        <h2>Pending Registrations</h2>
     </div>
 
-    {% if pending_reg %}
+    <span class="badge">
+        {{ pending_reg|length }} Pending
+    </span>
+</div>
 
-    <div class="table-wrap">
+{% if pending_reg %}
 
-        <table>
+<div class="table-wrap">
 
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Bank</th>
-                    <th>Account Name</th>
-                    <th>Account Number</th>
-                    <th>Reference</th>
-                    <th>Fee</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+    <table>
 
-            <tbody>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Bank</th>
+                <th>Account Name</th>
+                <th>Account Number</th>
+                <th>Reference</th>
+                <th>Fee</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-                {% for member in pending_reg %}
+        <tbody>
 
-                <tr>
+            {% for member in pending_reg %}
 
-                    <td>
-                        <strong>{{ member.full_name }}</strong>
-                    </td>
+            <tr>
 
-                    <td>{{ member.email }}</td>
+                <td>
+                    <strong>{{ member.full_name }}</strong>
+                </td>
 
-                    <td>{{ member.phone }}</td>
+                <td>{{ member.email }}</td>
 
-                    <td>{{ member.bank_name or "-" }}</td>
+                <td>{{ member.phone }}</td>
 
-                    <td>{{ member.account_name or "-" }}</td>
+                <td>{{ member.bank_name or "-" }}</td>
+                <td>{{ member.account_name or "-" }}</td>
 
-                    <td>{{ member.account_number or "-" }}</td>
+                <td>{{ member.account_number or "-" }}</td>
 
-                    <td>
-                        {{ member.registration_reference or "-" }}
-                    </td>
+                <td>
+                    {{ member.registration_reference or "-" }}
+                </td>
 
-                    <td>
-                        ₦{{ "{:,.0f}".format(member.registration_fee or 2000) }}
-                    </td>
+                <td>
+                    ₦{{ "{:,.0f}".format(member.registration_fee or 2000) }}
+                </td>
 
-                    <td>
+                <td>
 
-                        <div class="actions">
+                    <div class="actions">
 
-                            <form
-                                method="post"
-                                action="/admin/user/{{ member.id }}/approve"
+                        <form
+                            method="post"
+                            action="/admin/user/{{ member.id }}/approve"
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-success"
                             >
-                                <button
-                                    type="submit"
-                                    class="btn btn-success"
-                                >
-                                    Approve
-                                </button>
-                            </form>
+                                Approve
+                            </button>
+                        </form>
 
-
-                            <form
-                                method="post"
-                                action="/admin/user/{{ member.id }}/reject"
+                        <form
+                            method="post"
+                            action="/admin/user/{{ member.id }}/reject"
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-danger"
                             >
-                                <button
-                                    type="submit"
-                                    class="btn btn-danger"
-                                >
-                                    Reject
-                                </button>
-                            </form>
+                                Reject
+                            </button>
+                        </form>
 
-                        </div>
+                    </div>
 
-                    </td>
+                </td>
 
-                </tr>
+            </tr>
 
-                {% endfor %}
+            {% endfor %}
 
-            </tbody>
+        </tbody>
 
-        </table>
+    </table>
 
-    </div>
+</div>
 
-    {% else %}
+{% else %}
 
-    <div class="empty">
-        No pending registrations.
-    </div>
+<div class="empty">
+    No pending registrations.
+</div>
 
-    {% endif %}
+{% endif %}
+```
 
 </section>
-
 
 <!-- ================= ALL MEMBERS ================= -->
 
 <section class="panel">
 
-    <div class="panel-head">
+```
+<div class="panel-head">
 
-        <div>
-            <span class="eyebrow">MEMBERS</span>
-            <h2>All Members</h2>
-        </div>
-
-        <span class="badge">
-            {{ registrations|length }} Members
-        </span>
-
+    <div>
+        <span class="eyebrow">MEMBERS</span>
+        <h2>All Members</h2>
     </div>
 
+    <span class="badge">
+        {{ registrations|length }} Members
+    </span>
 
-    {% if registrations %}
+</div>
 
-    <div class="table-wrap">
+{% if registrations %}
 
-        <table>
+<div class="table-wrap">
 
-            <thead>
+    <table>
 
-                <tr>
-                    <th>Name</th>
-                    <th>Contact</th>
-                    <th>Bank</th>
-                    <th>Account Name</th>
-                    <th>Account Number</th>
-                    <th>Status</th>
-                    <th>Registration Fee</th>
-                    <th>Weekly Progress</th>
-                    <th>Action</th>
-                </tr>
+        <thead>
 
-            </thead>
+            <tr>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Bank</th>
+                <th>Account Name</th>
+                <th>Account Number</th>
+                <th>Status</th>
+                <th>Registration Fee</th>
+                <th>Weekly Progress</th>
+                <th>Action</th>
+            </tr>
 
+        </thead>
 
-            <tbody>
+        <tbody>
 
-                {% for member in registrations %}
+            {% for member in registrations %}
 
-                <tr>
+            <tr>
 
-                    <td>
-                        <strong>{{ member.full_name }}</strong>
-                    </td>
+                <td>
+                    <strong>{{ member.full_name }}</strong>
+                </td>
 
-                    <td>
-                        {{ member.email }}<br>
-                        <small>{{ member.phone }}</small>
-                    </td>
+                <td>
+                    {{ member.email }}<br>
+                    <small>{{ member.phone }}</small>
+                </td>
 
-                    <td>
-                        {{ member.bank_name or "-" }}
-                    </td>
+                <td>
+                    {{ member.bank_name or "-" }}
+                </td>
 
-                    <td>
-                        {{ member.account_name or "-" }}
-                    </td>
+                <td>
+                    {{ member.account_name or "-" }}
+                </td>
 
-                    <td>
-                        {{ member.account_number or "-" }}
-                    </td>
+                <td>
+                    {{ member.account_number or "-" }}
+                </td>
 
+                <td>
 
-                    <td>
+                    {% if member.status == "approved" %}
 
-                        {% if member.status == "approved" %}
+                        <span class="status approved">
+                            Approved
+                        </span>
 
-                            <span class="status approved">
-                                Approved
-                            </span>
+                    {% elif member.status == "pending" %}
 
-                        {% elif member.status == "pending" %}
+                        <span class="status pending">
+                            Pending
+                        </span>
 
-                            <span class="status pending">
-                                Pending
-                            </span>
+                    {% else %}
 
-                        {% else %}
+                        <span class="status rejected">
+                            Rejected
+                        </span>
 
-                            <span class="status rejected">
-                                Rejected
-                            </span>
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {% if member.registration_fee_status == "approved" %}
+
+                        <span class="status approved">
+                            Approved
+                        </span>
+
+                    {% elif member.registration_fee_status == "pending" %}
+
+                        <span class="status pending">
+                            Pending
+                        </span>
+
+                    {% else %}
+
+                        <span class="status rejected">
+                            Rejected
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+                    ₦{{ "{:,.0f}".format(member.weekly_approved or 0) }}
+                </td>
+
+                <td>
+
+                    <div class="actions">
+
+                        <a
+                            href="/admin/user/{{ member.id }}"
+                            class="btn btn-outline"
+                        >
+                            View
+                        </a>
+
+                        {% if member.status == "pending" %}
+
+                        <form
+                            method="post"
+                            action="/admin/user/{{ member.id }}/approve"
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-success"
+                            >
+                                Approve
+                            </button>
+                        </form>
+
+                        <form
+                            method="post"
+                            action="/admin/user/{{ member.id }}/reject"
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-danger"
+                            >
+                                Reject
+                            </button>
+                        </form>
 
                         {% endif %}
 
-                    </td>
+                        {% if member.role != "admin" %}
 
-
-                    <td>
-
-                        {% if member.registration_fee_status == "approved" %}
-
-                            <span class="status approved">
-                                Approved
-                            </span>
-
-                        {% elif member.registration_fee_status == "pending" %}
-
-                            <span class="status pending">
-                                Pending
-                            </span>
-
-                        {% else %}
-
-                            <span class="status rejected">
-                                Rejected
-                            </span>
+                        <form
+                            method="post"
+                            action="/admin/user/{{ member.id }}/delete"
+                            onsubmit="return confirm('Are you sure you want to permanently delete this member? Their transactions will also be deleted.');"
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-danger"
+                            >
+                                Delete
+                            </button>
+                        </form>
 
                         {% endif %}
 
-                    </td>
+                    </div>
 
+                </td>
 
-                    <td>
-                        ₦{{ "{:,.0f}".format(member.weekly_progress or 0) }}
-                    </td>
+            </tr>
 
+            {% endfor %}
 
-                    <td>
+        </tbody>
 
-                        <div class="actions">
+    </table>
 
-                            <a
-                                href="/admin/member/{{ member.id }}"
-                                class="btn btn-outline"
-                            >
-                                View
-                            </a>
+</div>
 
+{% else %}
 
-                            {% if member.status == "pending" %}
+<div class="empty">
+    No members found.
+</div>
 
-                            <form
-                                method="post"
-                                action="/admin/user/{{ member.id }}/approve"
-                            >
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-success"
-                                >
-                                    Approve
-                                </button>
-
-                            </form>
-
-
-                            <form
-                                method="post"
-                                action="/admin/user/{{ member.id }}/reject"
-                            >
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-danger"
-                                >
-                                    Reject
-                                </button>
-
-                            </form>
-
-                            {% endif %}
-
-
-                            {% if member.role != "admin" %}
-
-                            <form
-                                method="post"
-                                action="/admin/user/{{ member.id }}/delete"
-                                onsubmit="return confirm(
-                                    'Are you sure you want to permanently delete {{ member.full_name }}? This will also delete their transactions.'
-                                );"
-                            >
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-danger"
-                                >
-                                    Delete
-                                </button>
-
-                            </form>
-
-                            {% endif %}
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-    {% else %}
-
-    <div class="empty">
-        No members found.
-    </div>
-
-    {% endif %}
+{% endif %}
+```
 
 </section>
 
-
-<!-- ================= CONTRIBUTION STATS ================= -->
+<!-- ================= CONTRIBUTION OVERVIEW ================= -->
 
 <section class="panel">
 
-    <div class="panel-head">
+```
+<div class="panel-head">
 
-        <div>
-            <span class="eyebrow">CONTRIBUTIONS</span>
-            <h2>Contribution Overview</h2>
-        </div>
-
+    <div>
+        <span class="eyebrow">CONTRIBUTIONS</span>
+        <h2>Contribution Overview</h2>
     </div>
 
+</div>
 
-    <div class="stats-grid">
+<div class="stats-grid">
 
-        <div class="stat-card">
-            <span>Pending Contributions</span>
-            <strong>{{ pending_deposits }}</strong>
-        </div>
-
-        <div class="stat-card">
-            <span>Approved Contributions</span>
-            <strong>₦{{ "{:,.0f}".format(approved_total or 0) }}</strong>
-        </div>
-
-        <div class="stat-card">
-            <span>Pending Amount</span>
-            <strong>₦{{ "{:,.0f}".format(pending_total or 0) }}</strong>
-        </div>
-
+    <div class="stat-card">
+        <span>Pending Contributions</span>
+        <strong>{{ pending_deposits }}</strong>
     </div>
+
+    <div class="stat-card">
+        <span>Approved Contributions</span>
+        <strong>
+            ₦{{ "{:,.0f}".format(approved_total or 0) }}
+        </strong>
+    </div>
+
+    <div class="stat-card">
+        <span>Pending Amount</span>
+        <strong>
+            ₦{{ "{:,.0f}".format(pending_total or 0) }}
+        </strong>
+    </div>
+
+</div>
+```
 
 </section>
 
-
-<!-- ================= CONTRIBUTIONS TABLE ================= -->
+<!-- ================= CONTRIBUTIONS ================= -->
 
 <section class="panel">
 
-    <div class="panel-head">
+```
+<div class="panel-head">
 
-        <div>
-            <span class="eyebrow">TRANSACTIONS</span>
-            <h2>Member Contributions</h2>
-        </div>
-
+    <div>
+        <span class="eyebrow">TRANSACTIONS</span>
+        <h2>Member Contributions</h2>
+        <p>Review and approve member contribution payments.</p>
     </div>
 
+    <span class="badge">
+        {{ deposits|length }} Total
+    </span>
 
-    {% if deposits %}
-
-    <div class="table-wrap">
-
-        <table>
-
-            <thead>
-
-                <tr>
-                    <th>Member</th>
-                    <th>Amount</th>
-                    <th>Bank</th>
-                    <th>Account Name</th>
-                    <th>Reference</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Action</th>
-                </tr>
-
-            </thead>
+</div>
 
 
-            <tbody>
+{% if deposits %}
 
-                {% for deposit in deposits %}
+<div class="table-wrap">
 
-                <tr>
+    <table>
 
-                    <td>
-                        <strong>{{ deposit.full_name }}</strong>
-                    </td>
+        <thead>
 
-                    <td>
+            <tr>
+                <th>Member</th>
+                <th>Amount</th>
+                <th>Bank Sent From</th>
+                <th>Account Name</th>
+                <th>Account Number</th>
+                <th>Reference</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for deposit in deposits %}
+
+            <tr>
+
+                <td>
+                    <strong>{{ deposit.full_name }}</strong>
+                    <br>
+                    <small>{{ deposit.email }}</small>
+                </td>
+
+                <td>
+                    <strong>
                         ₦{{ "{:,.0f}".format(deposit.amount or 0) }}
-                    </td>
+                    </strong>
+                </td>
 
-                    <td>
-                        {{ deposit.bank_name or "-" }}
-                    </td>
+                <td>
+                    {{ deposit.transfer_bank or "-" }}
+                </td>
 
-                    <td>
-                        {{ deposit.account_name or "-" }}
-                    </td>
+                <td>
+                    {{ deposit.transfer_account_name or "-" }}
+                </td>
 
-                    <td>
+                <td>
+                    ****{{ (deposit.transfer_account_number or "")[-4:] }}
+                </td>
+
+                <td>
+                    <strong>
                         {{ deposit.reference or "-" }}
-                    </td>
+                    </strong>
+                </td>
 
-                    <td>
+                <td>
 
-                        {% if deposit.status == "approved" %}
+                    {% if deposit.status == "approved" %}
 
-                            <span class="status approved">
-                                Approved
-                            </span>
+                        <span class="status approved">
+                            Approved
+                        </span>
 
-                        {% elif deposit.status == "pending" %}
+                    {% elif deposit.status == "pending" %}
 
-                            <span class="status pending">
-                                Pending
-                            </span>
+                        <span class="status pending">
+                            Pending
+                        </span>
 
-                        {% else %}
+                    {% else %}
 
-                            <span class="status rejected">
-                                Rejected
-                            </span>
+                        <span class="status rejected">
+                            Rejected
+                        </span>
 
-                        {% endif %}
+                    {% endif %}
 
-                    </td>
+                </td>
 
-                    <td>
-                        {{ deposit.created_at }}
-                    </td>
+                <td>
+                    {{ deposit.created_at }}
+                </td>
 
+                <td>
 
-                    <td>
+                    {% if deposit.status == "pending" %}
 
-                        {% if deposit.status == "pending" %}
+                    <div class="actions">
 
-                        <div class="actions">
-
-                            <form
-                                method="post"
-                                action="/admin/transaction/{{ deposit.id }}/approve"
+                        <form
+                            method="post"
+                            action="/admin/transaction/{{ deposit.id }}/approve"
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-success"
                             >
+                                Approve
+                            </button>
+                        </form>
 
-                                <button
-                                    type="submit"
-                                    class="btn btn-success"
-                                >
-                                    Approve
-                                </button>
-
-                            </form>
-
-
-                            <form
-                                method="post"
-                                action="/admin/transaction/{{ deposit.id }}/reject"
+                        <form
+                            method="post"
+                            action="/admin/transaction/{{ deposit.id }}/reject"
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-danger"
                             >
+                                Reject
+                            </button>
+                        </form>
 
-                                <button
-                                    type="submit"
-                                    class="btn btn-danger"
-                                >
-                                    Reject
-                                </button>
+                    </div>
 
-                            </form>
+                    {% elif deposit.status == "approved" %}
 
-                        </div>
+                        <span class="muted">
+                            Approved
+                        </span>
 
-                        {% else %}
+                    {% else %}
 
-                            <span class="muted">Completed</span>
+                        <span class="muted">
+                            Rejected
+                        </span>
 
-                        {% endif %}
+                    {% endif %}
 
-                    </td>
+                </td>
 
-                </tr>
+            </tr>
 
-                {% endfor %}
+            {% endfor %}
 
-            </tbody>
+        </tbody>
 
-        </table>
+    </table>
 
-    </div>
+</div>
 
-    {% else %}
+{% else %}
 
-    <div class="empty">
-        No contributions found.
-    </div>
+<div class="empty">
+    No contributions have been submitted yet.
+</div>
 
-    {% endif %}
+{% endif %}
+
 
 </section>
-
-
-<script>
-
-function confirmDelete(name) {
-
-    return confirm(
-        "Are you sure you want to permanently delete " +
-        name +
-        "? Their transactions will also be deleted."
-    );
-
-}
-
-</script>
 
 {% endblock %}
