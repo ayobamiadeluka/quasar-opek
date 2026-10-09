@@ -1,0 +1,108 @@
+@'
+{% extends "base.html" %}
+
+{% block title %}Member Details | QUASAR-OPEK{% endblock %}
+
+{% block content %}
+<div class="page-shell">
+    <div class="page-head">
+        <div>
+            <div class="eyebrow">ADMINISTRATION</div>
+            <h1>{{ member.full_name }}</h1>
+            <p>Member account details and contribution history.</p>
+        </div>
+        <a href="/admin" class="btn secondary">Back to Admin</a>
+    </div>
+
+    <section class="card">
+        <h2>Member Information</h2>
+        <p><strong>Name:</strong> {{ member.full_name }}</p>
+        <p><strong>Email:</strong> {{ member.email }}</p>
+        <p><strong>Phone:</strong> {{ member.phone or "Not provided" }}</p>
+        <p><strong>Bank:</strong> {{ member.bank_name or "Not provided" }}</p>
+        <p><strong>Account Name:</strong> {{ member.account_name or "Not provided" }}</p>
+        <p><strong>Account Number:</strong> {{ member.account_number or "Not provided" }}</p>
+        <p><strong>Membership Status:</strong> {{ member.status|title }}</p>
+        <p><strong>Registration Fee:</strong> {{ member.registration_fee_status|title }}</p>
+        <p><strong>Referral Code:</strong> {{ member.referral_code or "None" }}</p>
+
+        {% if member.status == "pending" %}
+        <div class="action-row">
+            <form method="post" action="/admin/member/{{ member.id }}/approve">
+                <button class="btn primary" type="submit">Approve Member</button>
+            </form>
+            <form method="post" action="/admin/member/{{ member.id }}/reject">
+                <button class="btn danger" type="submit">Reject Member</button>
+            </form>
+        </div>
+        {% endif %}
+    </section>
+
+    <div class="grid stats-grid">
+        <section class="card stat-card">
+            <span>Approved Contributions</span>
+            <strong>₦{{ "{:,.2f}".format(approved_total or 0) }}</strong>
+        </section>
+        <section class="card stat-card">
+            <span>Pending Contributions</span>
+            <strong>₦{{ "{:,.2f}".format(pending_total or 0) }}</strong>
+        </section>
+    </div>
+
+    <section class="card">
+        <h2>Transaction History</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Reference</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transactions %}
+                    <tr>
+                        <td>{{ t.kind|replace("_", " ")|title }}</td>
+                        <td>₦{{ "{:,.2f}".format(t.amount or 0) }}</td>
+                        <td>{{ t.reference or "—" }}</td>
+                        <td>{{ t.status|title }}</td>
+                        <td>{{ t.created_at[:10] if t.created_at else "—" }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5">No transactions found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Referred Members</h2>
+        {% if referrals %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Status</th><th>Joined</th></tr>
+                </thead>
+                <tbody>
+                    {% for referral in referrals %}
+                    <tr>
+                        <td>{{ referral.full_name }}</td>
+                        <td>{{ referral.email }}</td>
+                        <td>{{ referral.status|title }}</td>
+                        <td>{{ referral.created_at[:10] if referral.created_at else "—" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>This member has not referred anyone yet.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+'@ | Set-Content -Encoding UTF8 "templates\admin\member.html"

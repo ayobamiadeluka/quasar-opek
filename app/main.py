@@ -1942,7 +1942,7 @@ def admin_member_profile(
         """, (user_id,)).fetchone()[0]
 
     return templates.TemplateResponse(
-        "admin/member.html",
+        "member_profile.html",
         {
             "request": request,
             "user": admin,
