@@ -1,6 +1,6 @@
 import os
 import re
-import sqlite3
+import psycopg
 import hashlib
 import secrets
 
@@ -44,7 +44,12 @@ APP_BASE_URL = os.getenv(
     "http://127.0.0.1:8000"
 ).rstrip("/")
 
-DB_PATH = BASE_DIR / "quasar.db"
+DB_PATH = Path(
+    os.getenv(
+        "DB_PATH",
+        str(BASE_DIR / "quasar.db")
+    )
+)
 
 
 app = FastAPI(
@@ -79,22 +84,70 @@ templates = Jinja2Templates(
 # DATABASE
 # =========================================================
 
+class HybridRow(dict):
+    """Allow database rows to be accessed by column name or numeric index."""
+
+    def __init__(self, columns, values):
+        super().__init__(zip(columns, values))
+        self._values = values
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self._values[key]
+        return super().__getitem__(key)
+
+
+def hybrid_row_factory(cursor):
+    # Column descriptions are available when a result row is fetched.
+    return lambda values: HybridRow(
+        [column.name for column in cursor.description],
+        values,
+    )
+
+
+class PostgresConnection:
+    """Small compatibility layer for the app's existing parameterized queries."""
+
+    def __init__(self, connection):
+        self._connection = connection
+
+    def execute(self, sql, params=()):
+        # Existing application queries use SQLite-style question-mark markers.
+        return self._connection.execute(
+            sql.replace("?", "%s"),
+            params,
+        )
+
+    def commit(self):
+        self._connection.commit()
+
+    def rollback(self):
+        self._connection.rollback()
+
+    def close(self):
+        self._connection.close()
+
+
 @contextmanager
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
+    url = os.getenv("DATABASE_URL")
+    if not url:
+        raise RuntimeError("DATABASE_URL is not configured.")
 
-    # Enforce foreign keys.
-    conn.execute("PRAGMA foreign_keys = ON")
+    conn = psycopg.connect(
+        url,
+        row_factory=hybrid_row_factory,
+    )
+    db = PostgresConnection(conn)
 
     try:
-        yield conn
-        conn.commit()
+        yield db
+        db.commit()
     except Exception:
-        conn.rollback()
+        db.rollback()
         raise
     finally:
-        conn.close()
+        db.close()
 
 
 # =========================================================
@@ -204,188 +257,27 @@ def valid_password(password: str) -> bool:
 # =========================================================
 
 def init_db():
-
+    # The tables already exist in Supabase. Do not recreate or migrate them
+    # using SQLite-specific SQL during application startup.
     with get_db() as conn:
-
-        # -------------------------------------------------
-        # USERS
-        # -------------------------------------------------
-
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                full_name TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                phone TEXT NOT NULL,
-                password_hash TEXT NOT NULL,
-                bank_name TEXT NOT NULL,
-                account_name TEXT NOT NULL,
-                account_number TEXT NOT NULL,
-                role TEXT NOT NULL DEFAULT 'user',
-                status TEXT NOT NULL DEFAULT 'pending',
-                registration_fee_status TEXT NOT NULL DEFAULT 'pending',
-                weekly_target INTEGER NOT NULL DEFAULT 1000,
-                referral_code TEXT,
-                referred_by TEXT,
-                created_at TEXT NOT NULL
-            )
-        """)
-
-        # -------------------------------------------------
-        # TRANSACTIONS
-        # -------------------------------------------------
-
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS transactions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                kind TEXT NOT NULL,
-                amount REAL NOT NULL,
-                status TEXT NOT NULL DEFAULT 'pending',
-                reference TEXT,
-                transfer_bank TEXT,
-                transfer_account_name TEXT,
-                transfer_account_number TEXT,
-                created_at TEXT NOT NULL,
-                FOREIGN KEY(user_id)
-                    REFERENCES users(id)
-                    ON DELETE CASCADE
-            )
-        """)
-
-        # -------------------------------------------------
-        # NOTIFICATIONS
-        # -------------------------------------------------
-
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS notifications (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                title TEXT NOT NULL,
-                message TEXT NOT NULL,
-                category TEXT NOT NULL DEFAULT 'info',
-                is_read INTEGER NOT NULL DEFAULT 0,
-                created_at TEXT NOT NULL,
-                FOREIGN KEY(user_id)
-                    REFERENCES users(id)
-                    ON DELETE CASCADE
-            )
-        """)
-
-        # -------------------------------------------------
-        # MIGRATIONS
-        # -------------------------------------------------
-
-        user_columns = {
-            row["name"]
-            for row in conn.execute(
-                "PRAGMA table_info(users)"
-            ).fetchall()
-        }
-
-        transaction_columns = {
-            row["name"]
-            for row in conn.execute(
-                "PRAGMA table_info(transactions)"
-            ).fetchall()
-        }
-
-        # USERS
-
-        if "referral_code" not in user_columns:
-            conn.execute("""
-                ALTER TABLE users
-                ADD COLUMN referral_code TEXT
-            """)
-
-        if "referred_by" not in user_columns:
-            conn.execute("""
-                ALTER TABLE users
-                ADD COLUMN referred_by TEXT
-            """)
-
-        if "registration_fee_status" not in user_columns:
-            conn.execute("""
-                ALTER TABLE users
-                ADD COLUMN registration_fee_status TEXT
-                NOT NULL DEFAULT 'pending'
-            """)
-
-        if "weekly_target" not in user_columns:
-            conn.execute("""
-                ALTER TABLE users
-                ADD COLUMN weekly_target INTEGER
-                NOT NULL DEFAULT 1000
-            """)
-
-        # TRANSACTIONS
-
-        if "transfer_bank" not in transaction_columns:
-            conn.execute("""
-                ALTER TABLE transactions
-                ADD COLUMN transfer_bank TEXT
-            """)
-
-        if "transfer_account_name" not in transaction_columns:
-            conn.execute("""
-                ALTER TABLE transactions
-                ADD COLUMN transfer_account_name TEXT
-            """)
-
-        if "transfer_account_number" not in transaction_columns:
-            conn.execute("""
-                ALTER TABLE transactions
-                ADD COLUMN transfer_account_number TEXT
-            """)
-
-        # -------------------------------------------------
-        # UNIQUE REFERRAL INDEX
-        # -------------------------------------------------
-
-        conn.execute("""
-            CREATE UNIQUE INDEX IF NOT EXISTS
-            idx_users_referral_code
-            ON users(referral_code)
-            WHERE referral_code IS NOT NULL
-        """)
-
-        # -------------------------------------------------
-        # CREATE / UPDATE ADMIN
-        # -------------------------------------------------
-
-        admin = conn.execute("""
-            SELECT id
-            FROM users
-            WHERE email=?
-        """, (ADMIN_EMAIL,)).fetchone()
+        admin = conn.execute(
+            "SELECT id FROM users WHERE email=?",
+            (ADMIN_EMAIL,),
+        ).fetchone()
 
         if not admin:
-
             conn.execute("""
                 INSERT INTO users (
-                    full_name,
-                    email,
-                    phone,
-                    password_hash,
-                    bank_name,
-                    account_name,
-                    account_number,
-                    role,
-                    status,
-                    registration_fee_status,
-                    weekly_target,
-                    referral_code,
-                    created_at
+                    full_name, email, phone, password_hash,
+                    role, status, registration_fee_status,
+                    weekly_target, referral_code, created_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 "QUASAR-OPEK Administrator",
                 ADMIN_EMAIL,
                 "",
                 hash_password(ADMIN_PASSWORD),
-                "",
-                "",
-                "",
                 "admin",
                 "approved",
                 "approved",
@@ -393,9 +285,7 @@ def init_db():
                 None,
                 now_iso(),
             ))
-
         else:
-
             conn.execute("""
                 UPDATE users
                 SET role='admin',
@@ -792,6 +682,7 @@ def register(
                 created_at
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            RETURNING id
         """, (
             full_name,
             email,
@@ -809,7 +700,7 @@ def register(
             now_iso(),
         ))
 
-        user_id = cursor.lastrowid
+        user_id = cursor.fetchone()[0]
 
         # -------------------------------------------------
         # REGISTRATION FEE

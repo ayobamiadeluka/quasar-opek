@@ -4,3 +4,8 @@ __pycache__/
 .env
 quasar.db
 quasar_backup.db
+
+.env
+quasar.db
+.venv/
+__pycache__/
